@@ -154,6 +154,38 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,12,20,0.88);backdrop-
 footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:10px}
 .footer-dot{width:3px;height:3px;border-radius:50%;background:var(--text3)}
 
+/* ── PDF badge on upload zone ── */
+.format-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2);color:#fb7185;font-size:10px;font-weight:700;letter-spacing:0.8px;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+
+/* ── Voice box ── */
+.voice-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;animation:fadeUp 0.6s 0.2s ease both}
+.voice-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.voice-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
+.voice-title::before{content:'';width:3px;height:14px;background:var(--amber);border-radius:99px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:3px}
+.lang-btn{padding:4px 12px;border-radius:6px;border:none;background:transparent;color:var(--text3);font-size:11px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px}
+.lang-btn.active{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(59,130,246,0.4)}
+.voice-body{padding:16px 24px 20px;display:flex;align-items:center;gap:14px}
+.voice-speak-btn{width:44px;height:44px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--amber-dim),rgba(245,158,11,0.2));border:1px solid rgba(245,158,11,0.3);color:var(--amber);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+.voice-speak-btn:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(245,158,11,0.3)}
+.voice-speak-btn:disabled{opacity:0.3;cursor:not-allowed;transform:none}
+.voice-speak-btn.speaking{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.25));border-color:rgba(16,185,129,0.4);color:var(--green);animation:voicePulse 0.8s ease infinite}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 10px rgba(16,185,129,0.2)}50%{box-shadow:0 0 24px rgba(16,185,129,0.5)}}
+.voice-waves{display:flex;align-items:center;gap:3px;height:28px}
+.voice-wave{width:3px;border-radius:99px;background:var(--text3);transition:background 0.3s}
+.voice-wave.active{background:var(--amber)}
+.voice-wave:nth-child(1){height:6px}.voice-wave:nth-child(2){height:12px}.voice-wave:nth-child(3){height:20px}.voice-wave:nth-child(4){height:14px}.voice-wave:nth-child(5){height:8px}.voice-wave:nth-child(6){height:18px}.voice-wave:nth-child(7){height:10px}
+.voice-waves.animating .voice-wave{animation:waveAnim 0.6s ease infinite}
+.voice-waves.animating .voice-wave:nth-child(2){animation-delay:0.1s}
+.voice-waves.animating .voice-wave:nth-child(3){animation-delay:0.2s}
+.voice-waves.animating .voice-wave:nth-child(4){animation-delay:0.15s}
+.voice-waves.animating .voice-wave:nth-child(5){animation-delay:0.05s}
+.voice-waves.animating .voice-wave:nth-child(6){animation-delay:0.25s}
+.voice-waves.animating .voice-wave:nth-child(7){animation-delay:0.1s}
+@keyframes waveAnim{0%,100%{transform:scaleY(1)}50%{transform:scaleY(2.2)}}
+.voice-text{font-size:12px;color:var(--text2);font-style:italic;line-height:1.5;flex:1}
+.voice-text em{color:var(--text3);font-style:normal}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
 @media(max-width:740px){
@@ -209,10 +241,10 @@ footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px
       </div>
 
       <div class="upload-zone" id="uploadZone">
-        <input type="file" id="fileInput" accept="image/*">
+        <input type="file" id="fileInput" accept="image/*,application/pdf">
         <div class="upload-icon-wrap">📤</div>
-        <div class="upload-primary">Drop image here or browse</div>
-        <div class="upload-secondary">JPG · PNG · WEBP · max 10 MB</div>
+        <div class="upload-primary">Drop file here or browse</div>
+        <div class="upload-secondary">JPG · PNG · WEBP · <span class="format-badge">PDF</span> · max 10 MB</div>
       </div>
 
       <div class="preview-section">
@@ -270,6 +302,26 @@ footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px
         <div class="pred-list" id="predList"></div>
       </div>
 
+      <!-- Voice Announcement Box -->
+      <div class="voice-box" id="voiceBox">
+        <div class="voice-header">
+          <div class="voice-title">Voice Announcement</div>
+          <div class="lang-toggle">
+            <button class="lang-btn active" id="btnEn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" id="btnHi" onclick="setLang('hi')">हिं</button>
+          </div>
+        </div>
+        <div class="voice-body">
+          <button class="voice-speak-btn" id="speakBtn" onclick="speakResult()" disabled title="Speak result">🔊</button>
+          <div class="voice-waves" id="voiceWaves">
+            <div class="voice-wave"></div><div class="voice-wave"></div><div class="voice-wave"></div>
+            <div class="voice-wave"></div><div class="voice-wave"></div><div class="voice-wave"></div>
+            <div class="voice-wave"></div>
+          </div>
+          <div class="voice-text" id="voiceText"><em>Result will be announced here after verification…</em></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -283,11 +335,17 @@ footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px
   <span>No data leaves your device</span>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.19.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
 <script>
 const MODEL_URL = "https://teachablemachine.withgoogle.com/models/TFEuA9MtD/";
 const THRESHOLD = 0.60;
+
+// Set PDF.js worker
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+}
 
 // ── Handles ALL possible class name variations your Teachable Machine model might output ──
 const CLASS_MAP = {
@@ -300,7 +358,24 @@ const CLASS_MAP = {
 const VALID_SET = new Set(["Aadhaar","PAN Card","Voter ID","Birth Certificate"]);
 const TAG_MAP   = {"Aadhaar":"tag-aadhaar","PAN Card":"tag-pan","Voter ID":"tag-voter","Birth Certificate":"tag-birth"};
 
+// ── Voice messages ──
+const VOICE_MSGS = {
+  en: {
+    valid: (doc, pct) => `Verification successful. ${doc} has been identified and verified with ${pct} percent confidence.`,
+    invalid: (pct) => `Verification failed. The document could not be recognised. Confidence was only ${pct} percent. Please upload a clearer image.`,
+    lowConf: (pct) => `Verification failed. Confidence is too low at ${pct} percent. Please use a well-lit, clear image of the document.`
+  },
+  hi: {
+    valid: (doc, pct) => `सत्यापन सफल रहा। ${doc} की पहचान ${pct} प्रतिशत विश्वास के साथ की गई है।`,
+    invalid: (pct) => `सत्यापन विफल रहा। दस्तावेज़ को पहचाना नहीं जा सका। कृपया एक स्पष्ट छवि अपलोड करें।`,
+    lowConf: (pct) => `सत्यापन विफल रहा। विश्वास केवल ${pct} प्रतिशत है। कृपया अच्छी रोशनी में दस्तावेज़ की स्पष्ट छवि का उपयोग करें।`
+  }
+};
+
 let model = null, imageReady = false;
+let currentLang = 'en';
+let lastResult = null;
+let speaking = false;
 
 const $dot       = document.getElementById('dotEl');
 const $modelTxt  = document.getElementById('modelStatusEl');
@@ -319,12 +394,72 @@ const $btnWrap   = document.getElementById('btnWrap');
 const $btn       = document.getElementById('verifyBtn');
 const $btnText   = document.getElementById('btnText');
 const $btnIcon   = document.getElementById('btnIcon');
+const $speakBtn  = document.getElementById('speakBtn');
+const $voiceText = document.getElementById('voiceText');
+const $voiceWaves= document.getElementById('voiceWaves');
 
 function canonicalise(raw) {
   return CLASS_MAP[raw.trim().toLowerCase()] || raw;
 }
 
-// Load model
+// ── Language toggle ──
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btnEn').className = 'lang-btn' + (lang==='en' ? ' active' : '');
+  document.getElementById('btnHi').className = 'lang-btn' + (lang==='hi' ? ' active' : '');
+  if (lastResult) updateVoiceText(lastResult);
+}
+
+function updateVoiceText(result) {
+  const msgs = VOICE_MSGS[currentLang];
+  let msg;
+  if (result.valid) {
+    msg = msgs.valid(result.canonical, result.pct);
+  } else if (result.lowConf) {
+    msg = msgs.lowConf(result.pct);
+  } else {
+    msg = msgs.invalid(result.pct);
+  }
+  $voiceText.textContent = '"' + msg + '"';
+  lastResult._msg = msg;
+}
+
+// ── Speak ──
+function speakResult() {
+  if (!lastResult || speaking) return;
+  window.speechSynthesis.cancel();
+  const msg = lastResult._msg;
+  const utter = new SpeechSynthesisUtterance(msg);
+  utter.lang = currentLang === 'hi' ? 'hi-IN' : 'en-IN';
+  utter.rate = 0.92;
+  utter.pitch = 1.05;
+
+  // Try to pick a good voice
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v =>
+    currentLang === 'hi'
+      ? v.lang.startsWith('hi')
+      : (v.lang === 'en-IN' || v.lang === 'en-GB' || v.lang.startsWith('en'))
+  );
+  if (preferred) utter.voice = preferred;
+
+  utter.onstart = () => {
+    speaking = true;
+    $speakBtn.classList.add('speaking');
+    $speakBtn.textContent = '🔊';
+    $voiceWaves.classList.add('animating');
+    $voiceWaves.querySelectorAll('.voice-wave').forEach(w => w.classList.add('active'));
+  };
+  utter.onend = utter.onerror = () => {
+    speaking = false;
+    $speakBtn.classList.remove('speaking');
+    $voiceWaves.classList.remove('animating');
+    $voiceWaves.querySelectorAll('.voice-wave').forEach(w => w.classList.remove('active'));
+  };
+  window.speechSynthesis.speak(utter);
+}
+
+// ── Load model ──
 (async () => {
   try {
     model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
@@ -339,25 +474,60 @@ function canonicalise(raw) {
   }
 })();
 
+// ── File input ──
 document.getElementById('fileInput').addEventListener('change', e => {
   const f = e.target.files[0];
-  if (f) loadImage(URL.createObjectURL(f));
+  if (!f) return;
+  if (f.type === 'application/pdf') {
+    loadPDF(f);
+  } else {
+    loadImage(URL.createObjectURL(f));
+  }
 });
 
+// ── Drag & drop ──
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
 zone.addEventListener('drop', e => {
   e.preventDefault(); zone.classList.remove('dragover');
   const f = e.dataTransfer.files[0];
-  if (f && f.type.startsWith('image/')) loadImage(URL.createObjectURL(f));
+  if (!f) return;
+  if (f.type === 'application/pdf') {
+    loadPDF(f);
+  } else if (f.type.startsWith('image/')) {
+    loadImage(URL.createObjectURL(f));
+  }
 });
+
+// ── Load PDF: render first page to canvas → use as image ──
+async function loadPDF(file) {
+  setCard('scanning','📄','Reading PDF…','Rendering first page of your document');
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const page = await pdf.getPage(1);
+    const viewport = page.getViewport({ scale: 2.0 });
+    const canvas = document.createElement('canvas');
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    const dataUrl = canvas.toDataURL('image/png');
+    loadImage(dataUrl);
+  } catch(err) {
+    console.error(err);
+    setCard('invalid','⚠️','PDF Error','Could not read PDF. Try a different file.');
+  }
+}
 
 function loadImage(src) {
   $preview.src = src;
   $preview.style.display = 'block';
   $empty.style.display = 'none';
   imageReady = true;
+  lastResult = null;
+  $speakBtn.disabled = true;
+  $voiceText.innerHTML = '<em>Result will be announced here after verification…</em>';
   clearTags();
   $predPanel.style.display = 'none';
   $confSec.style.display = 'none';
@@ -383,17 +553,26 @@ async function runVerification() {
     const canonical = canonicalise(best.className);
     const pct = (best.probability * 100).toFixed(1);
     const isValid = VALID_SET.has(canonical) && best.probability >= THRESHOLD;
+    const isLowConf = !isValid && best.probability < THRESHOLD;
+
+    // Store result for voice
+    lastResult = { valid: isValid, lowConf: isLowConf, canonical, pct };
+    updateVoiceText(lastResult);
+    $speakBtn.disabled = false;
 
     if (isValid) {
       setCard('valid','✅', canonical + ' Verified', 'Authentic document identified with ' + pct + '% confidence');
       showConf(pct, true);
       highlightTag(canonical);
+      // Auto-speak after short delay
+      setTimeout(speakResult, 800);
     } else {
-      const reason = best.probability < THRESHOLD
+      const reason = isLowConf
         ? 'Confidence too low (' + pct + '%) — use a clearer, well-lit image'
         : 'Could not recognise as a supported document type';
       setCard('invalid','✗','Verification Failed', reason);
       showConf(pct, false);
+      setTimeout(speakResult, 800);
     }
     renderPreds(sorted);
   } catch(err) {
@@ -450,6 +629,9 @@ function renderPreds(sorted) {
     document.querySelectorAll('.pred-fill').forEach(f => { f.style.width = f.dataset.w + '%'; });
   }, 80);
 }
+
+// Preload voices
+window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 </script>
 </body>
 </html>
