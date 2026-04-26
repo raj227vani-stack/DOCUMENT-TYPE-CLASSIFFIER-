@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Personalise · DocVerify AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c14;
+  --surface: #0d1320;
+  --surface2: #111827;
+  --surface3: #161f30;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --cyan: #06b6d4;
+  --green: #10b981;
+  --green-dim: rgba(16,185,129,0.1);
+  --green-glow: rgba(16,185,129,0.35);
+  --red: #f43f5e;
+  --red-dim: rgba(244,63,94,0.1);
+  --red-glow: rgba(244,63,94,0.3);
+  --amber: #f59e0b;
+  --amber-dim: rgba(245,158,11,0.1);
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --mono: 'JetBrains Mono', monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(59,130,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(59,130,246,0.08) 0%,transparent 70%);pointer-events:none;z-index:0}
+
+header{position:sticky;top:0;z-index:100;background:rgba(8,12,20,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 40px;height:60px;display:flex;align-items:center;justify-content:space-between}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 0 20px rgba(59,130,246,0.4)}
+.logo-text{font-size:16px;font-weight:600;letter-spacing:-0.3px}
+.logo-text span{color:var(--blue)}
+.header-right{display:flex;align-items:center;gap:14px}
+.model-pill{display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;padding:5px 14px;font-size:12px;font-weight:500;color:var(--text2);font-family:var(--mono)}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber);animation:blink 1.4s ease infinite;flex-shrink:0}
+.pulse-dot.ok{background:var(--green);box-shadow:0 0 8px var(--green);animation:none}
+.pulse-dot.err{background:var(--red);box-shadow:0 0 6px var(--red);animation:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.nav-tag{background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.2);color:var(--blue);font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;padding:4px 12px;border-radius:4px}
+
+.page{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:48px 32px 80px}
+
+.hero{text-align:center;margin-bottom:48px;animation:fadeUp 0.6s ease both}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border2);border-radius:999px;padding:5px 16px;font-size:12px;font-weight:600;color:var(--blue);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-size:clamp(30px,5vw,50px);font-weight:700;letter-spacing:-1.5px;line-height:1.1;margin-bottom:16px;background:linear-gradient(135deg,#f1f5f9 0%,#94a3b8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero h1 .accent{background:linear-gradient(135deg,#3b82f6,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:15px;color:var(--text2);max-width:480px;margin:0 auto;line-height:1.7}
+
+.info-strip{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:16px 24px;display:flex;align-items:center;gap:16px;margin-bottom:20px;animation:fadeUp 0.6s 0.05s ease both}
+.info-stat{flex:1;text-align:center}
+.info-val{font-size:20px;font-weight:700;font-family:var(--mono);background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.info-key{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-weight:600}
+.info-div{width:1px;height:36px;background:var(--border)}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;animation:fadeUp 0.6s 0.1s ease both}
+.panel-header{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
+.panel-title::before{content:'';width:3px;height:14px;background:var(--blue);border-radius:99px;display:block}
+
+.upload-zone{margin:20px 24px;border:1.5px dashed rgba(59,130,246,0.25);border-radius:14px;padding:32px 20px;text-align:center;cursor:pointer;position:relative;overflow:hidden;background:rgba(59,130,246,0.02);transition:all 0.25s ease}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--blue);background:var(--blue-dim);transform:translateY(-1px)}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon-wrap{width:52px;height:52px;border:1.5px solid rgba(59,130,246,0.2);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;background:var(--blue-dim);font-size:22px;transition:transform 0.3s}
+.upload-zone:hover .upload-icon-wrap{transform:scale(1.08) rotate(-4deg)}
+.upload-primary{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.upload-secondary{font-size:12px;color:var(--text3)}
+
+.preview-section{margin:0 24px 0}
+.preview-box{border:1px solid var(--border2);border-radius:12px;overflow:hidden;background:var(--surface2);min-height:180px;display:flex;align-items:center;justify-content:center}
+.preview-empty{text-align:center;padding:30px}
+.preview-empty-icon{font-size:28px;opacity:0.2;display:block;margin-bottom:8px}
+.preview-empty-text{font-size:12px;color:var(--text3)}
+#preview{width:100%;max-height:260px;object-fit:contain;display:none;border-radius:12px}
+
+.verify-btn-wrap{padding:16px 24px;display:none}
+#verifyBtn{width:100%;padding:14px 24px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif;cursor:pointer;letter-spacing:0.2px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 32px rgba(59,130,246,0.35);transition:all 0.25s;position:relative;overflow:hidden}
+#verifyBtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);border-radius:inherit}
+#verifyBtn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(59,130,246,0.5)}
+#verifyBtn:active{transform:translateY(0)}
+#verifyBtn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+.doc-tags{padding:0 24px 24px;display:flex;flex-wrap:wrap;gap:8px}
+.doc-tag{padding:5px 13px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:0.4px;background:var(--surface3);border:1px solid var(--border);color:var(--text3);transition:all 0.2s}
+.doc-tag.lit{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.3);color:var(--green);box-shadow:0 0 14px rgba(16,185,129,0.15)}
+
+.right-col{display:flex;flex-direction:column;gap:16px}
+
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;min-height:200px;position:relative;transition:border-color 0.4s,box-shadow 0.4s;animation:fadeUp 0.6s 0.15s ease both}
+.result-card.state-scanning{border-color:rgba(245,158,11,0.3);box-shadow:0 0 40px rgba(245,158,11,0.06)}
+.result-card.state-valid{border-color:rgba(16,185,129,0.35);box-shadow:0 0 50px rgba(16,185,129,0.08)}
+.result-card.state-invalid{border-color:rgba(244,63,94,0.35);box-shadow:0 0 50px rgba(244,63,94,0.08)}
+
+.result-bar{height:3px;width:100%;background:var(--border);transition:background 0.4s}
+.state-scanning .result-bar{background:linear-gradient(90deg,transparent,var(--amber),transparent);background-size:200%;animation:scan 1.5s linear infinite}
+.state-valid .result-bar{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.state-invalid .result-bar{background:linear-gradient(90deg,var(--red),#fb7185)}
+@keyframes scan{0%{background-position:200%}100%{background-position:-200%}}
+
+.result-inner{padding:28px 28px 24px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.result-icon-wrap{width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:16px;background:var(--surface2);border:1px solid var(--border);transition:all 0.4s}
+.state-valid .result-icon-wrap{background:var(--green-dim);border-color:rgba(16,185,129,0.3);box-shadow:0 0 30px var(--green-glow)}
+.state-invalid .result-icon-wrap{background:var(--red-dim);border-color:rgba(244,63,94,0.3);box-shadow:0 0 30px var(--red-glow)}
+.state-scanning .result-icon-wrap{background:var(--amber-dim);border-color:rgba(245,158,11,0.3)}
+.result-headline{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:6px;transition:color 0.4s}
+.state-valid .result-headline{color:var(--green)}
+.state-invalid .result-headline{color:var(--red)}
+.result-sub{font-size:13px;color:var(--text3);margin-bottom:20px;line-height:1.5}
+
+.conf-section{width:100%;display:none;padding:16px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;text-align:left}
+.conf-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.conf-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.conf-value{font-family:var(--mono);font-size:14px;font-weight:600}
+.conf-value.ok{color:var(--green)}
+.conf-value.bad{color:var(--red)}
+.conf-track{height:6px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.conf-fill{height:100%;border-radius:99px;width:0%;transition:width 1s cubic-bezier(0.23,1,0.32,1)}
+.conf-fill.ok{background:linear-gradient(90deg,var(--green),#34d399);box-shadow:0 0 10px rgba(16,185,129,0.4)}
+.conf-fill.bad{background:linear-gradient(90deg,var(--red),#fb7185)}
+
+.scan-anim{display:none;width:100%;padding:16px 20px;background:var(--surface2);border:1px solid rgba(245,158,11,0.2);border-radius:12px}
+.scan-bar-wrap{height:4px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.scan-bar{height:100%;border-radius:99px;background:linear-gradient(90deg,transparent,var(--amber),transparent);background-size:200%;animation:scanBar 1.2s ease infinite}
+.scan-label{font-size:11px;color:var(--amber);font-family:var(--mono);margin-bottom:10px;letter-spacing:0.5px}
+@keyframes scanBar{0%{background-position:200%}100%{background-position:-200%}}
+.state-scanning .scan-anim{display:block}
+.state-scanning .conf-section{display:none!important}
+
+.predictions-panel{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;display:none;animation:fadeUp 0.4s ease both}
+.pred-header{padding:18px 24px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.pred-title{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:8px}
+.pred-title::before{content:'';width:3px;height:14px;background:var(--cyan);border-radius:99px}
+.pred-list{padding:16px 24px 20px;display:flex;flex-direction:column;gap:12px}
+.pred-row{display:flex;align-items:center;gap:12px}
+.pred-name{font-size:12px;font-weight:600;width:140px;flex-shrink:0;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pred-name.winner{color:var(--text)}
+.pred-track{flex:1;height:5px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.pred-fill{height:100%;border-radius:99px;width:0%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 0.9s cubic-bezier(0.23,1,0.32,1)}
+.pred-fill.top{background:linear-gradient(90deg,var(--green),#34d399);box-shadow:0 0 8px rgba(16,185,129,0.3)}
+.pred-pct{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text3);width:40px;text-align:right}
+.pred-pct.top{color:var(--green)}
+
+footer{position:relative;z-index:1;text-align:center;padding:24px;border-top:1px solid var(--border);font-size:12px;color:var(--text3);display:flex;align-items:center;justify-content:center;gap:10px}
+.footer-dot{width:3px;height:3px;border-radius:50%;background:var(--text3)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:740px){
+  header{padding:0 20px}
+  .nav-tag{display:none}
+  .page{padding:28px 16px 60px}
+  .grid{grid-template-columns:1fr}
+  .hero h1{font-size:28px}
+  .hero{margin-bottom:32px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <div class="logo-mark">📄</div>
+    <div class="logo-text">Personalise <span>AI</span></div>
+  </div>
+  <div class="header-right">
+    <div class="model-pill">
+      <div class="pulse-dot" id="dotEl"></div>
+      <span id="modelStatusEl">Initialising…</span>
+    </div>
+    <div class="nav-tag">DocVerify</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-eyebrow">✦ AI-Powered · On-Device</div>
+    <h1>Verify Indian Documents<br><span class="accent">Instantly &amp; Accurately</span></h1>
+    <p>Upload any government-issued ID and our trained neural network will identify and verify it in under a second.</p>
+  </div>
+
+  <div class="info-strip">
+    <div class="info-stat"><div class="info-val">4</div><div class="info-key">Doc Types</div></div>
+    <div class="info-div"></div>
+    <div class="info-stat"><div class="info-val">&lt;1s</div><div class="info-key">Verify Speed</div></div>
+    <div class="info-div"></div>
+    <div class="info-stat"><div class="info-val">TM</div><div class="info-key">Model Engine</div></div>
+    <div class="info-div"></div>
+    <div class="info-stat"><div class="info-val">100%</div><div class="info-key">On-Device</div></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- Upload panel -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Upload Document</div>
+      </div>
+
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*">
+        <div class="upload-icon-wrap">📤</div>
+        <div class="upload-primary">Drop image here or browse</div>
+        <div class="upload-secondary">JPG · PNG · WEBP · max 10 MB</div>
+      </div>
+
+      <div class="preview-section">
+        <div class="preview-box">
+          <div class="preview-empty" id="emptyState">
+            <span class="preview-empty-icon">🪪</span>
+            <span class="preview-empty-text">Document preview</span>
+          </div>
+          <img id="preview" alt="Uploaded document">
+        </div>
+      </div>
+
+      <div class="verify-btn-wrap" id="btnWrap">
+        <button id="verifyBtn" onclick="runVerification()">
+          <span id="btnIcon">🔬</span>
+          <span id="btnText">Verify Document</span>
+        </button>
+      </div>
+
+      <div class="doc-tags">
+        <div class="doc-tag" id="tag-aadhaar">Aadhaar</div>
+        <div class="doc-tag" id="tag-pan">PAN Card</div>
+        <div class="doc-tag" id="tag-voter">Voter ID</div>
+        <div class="doc-tag" id="tag-birth">Birth Certificate</div>
+      </div>
+    </div>
+
+    <!-- Results col -->
+    <div class="right-col">
+
+      <div class="result-card state-idle" id="resultCard">
+        <div class="result-bar"></div>
+        <div class="result-inner">
+          <div class="result-icon-wrap" id="resultIcon">🔍</div>
+          <div class="result-headline" id="resultHeadline">Awaiting Upload</div>
+          <div class="result-sub" id="resultSub">Upload a document image to begin AI verification</div>
+          <div class="conf-section" id="confSection">
+            <div class="conf-row">
+              <span class="conf-label">Confidence Score</span>
+              <span class="conf-value" id="confValue">—</span>
+            </div>
+            <div class="conf-track"><div class="conf-fill" id="confFill"></div></div>
+          </div>
+          <div class="scan-anim" id="scanAnim">
+            <div class="scan-label">SCANNING DOCUMENT…</div>
+            <div class="scan-bar-wrap"><div class="scan-bar"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="predictions-panel" id="predPanel">
+        <div class="pred-header">
+          <div class="pred-title">Classification Breakdown</div>
+        </div>
+        <div class="pred-list" id="predList"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span>Personalise DocVerify AI</span>
+  <div class="footer-dot"></div>
+  <span>Powered by Google Teachable Machine</span>
+  <div class="footer-dot"></div>
+  <span>No data leaves your device</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.19.0/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+<script>
+const MODEL_URL = "https://teachablemachine.withgoogle.com/models/TFEuA9MtD/";
+const THRESHOLD = 0.60;
+
+// ── Handles ALL possible class name variations your Teachable Machine model might output ──
+const CLASS_MAP = {
+  "adhar card":"Aadhaar","adhar":"Aadhaar","aadhaar":"Aadhaar","aadhar":"Aadhaar",
+  "aadhaar card":"Aadhaar","aadhar card":"Aadhaar","adhaar":"Aadhaar","adhaar card":"Aadhaar",
+  "pan":"PAN Card","pan card":"PAN Card","permanent account number":"PAN Card",
+  "voter id":"Voter ID","voter":"Voter ID","voter card":"Voter ID","voter identity card":"Voter ID",
+  "birth certificate":"Birth Certificate","birth cert":"Birth Certificate","birth":"Birth Certificate",
+};
+const VALID_SET = new Set(["Aadhaar","PAN Card","Voter ID","Birth Certificate"]);
+const TAG_MAP   = {"Aadhaar":"tag-aadhaar","PAN Card":"tag-pan","Voter ID":"tag-voter","Birth Certificate":"tag-birth"};
+
+let model = null, imageReady = false;
+
+const $dot       = document.getElementById('dotEl');
+const $modelTxt  = document.getElementById('modelStatusEl');
+const $card      = document.getElementById('resultCard');
+const $icon      = document.getElementById('resultIcon');
+const $headline  = document.getElementById('resultHeadline');
+const $sub       = document.getElementById('resultSub');
+const $confSec   = document.getElementById('confSection');
+const $confVal   = document.getElementById('confValue');
+const $confFill  = document.getElementById('confFill');
+const $predPanel = document.getElementById('predPanel');
+const $predList  = document.getElementById('predList');
+const $preview   = document.getElementById('preview');
+const $empty     = document.getElementById('emptyState');
+const $btnWrap   = document.getElementById('btnWrap');
+const $btn       = document.getElementById('verifyBtn');
+const $btnText   = document.getElementById('btnText');
+const $btnIcon   = document.getElementById('btnIcon');
+
+function canonicalise(raw) {
+  return CLASS_MAP[raw.trim().toLowerCase()] || raw;
+}
+
+// Load model
+(async () => {
+  try {
+    model = await tmImage.load(MODEL_URL + "model.json", MODEL_URL + "metadata.json");
+    $dot.className = 'pulse-dot ok';
+    $modelTxt.textContent = 'Model Ready';
+    if (imageReady) $btnWrap.style.display = 'block';
+  } catch(e) {
+    console.error(e);
+    $dot.className = 'pulse-dot err';
+    $modelTxt.textContent = 'Model Error';
+    setCard('invalid','⚠️','Model Failed to Load','Refresh the page and try again.');
+  }
+})();
+
+document.getElementById('fileInput').addEventListener('change', e => {
+  const f = e.target.files[0];
+  if (f) loadImage(URL.createObjectURL(f));
+});
+
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadImage(URL.createObjectURL(f));
+});
+
+function loadImage(src) {
+  $preview.src = src;
+  $preview.style.display = 'block';
+  $empty.style.display = 'none';
+  imageReady = true;
+  clearTags();
+  $predPanel.style.display = 'none';
+  $confSec.style.display = 'none';
+  setCard('idle','📄','Document Loaded','Click "Verify Document" to run AI analysis');
+  if (model) $btnWrap.style.display = 'block';
+}
+
+async function runVerification() {
+  if (!model || !imageReady) return;
+  $btn.disabled = true;
+  $btnText.textContent = 'Analysing…';
+  $btnIcon.textContent = '⏳';
+  $predPanel.style.display = 'none';
+  $confSec.style.display = 'none';
+  clearTags();
+  setCard('scanning','⚡','Scanning Document','Neural network is processing your image…');
+
+  try {
+    await new Promise(r => setTimeout(r, 400));
+    const preds = await model.predict($preview);
+    const sorted = [...preds].sort((a,b) => b.probability - a.probability);
+    const best = sorted[0];
+    const canonical = canonicalise(best.className);
+    const pct = (best.probability * 100).toFixed(1);
+    const isValid = VALID_SET.has(canonical) && best.probability >= THRESHOLD;
+
+    if (isValid) {
+      setCard('valid','✅', canonical + ' Verified', 'Authentic document identified with ' + pct + '% confidence');
+      showConf(pct, true);
+      highlightTag(canonical);
+    } else {
+      const reason = best.probability < THRESHOLD
+        ? 'Confidence too low (' + pct + '%) — use a clearer, well-lit image'
+        : 'Could not recognise as a supported document type';
+      setCard('invalid','✗','Verification Failed', reason);
+      showConf(pct, false);
+    }
+    renderPreds(sorted);
+  } catch(err) {
+    console.error(err);
+    setCard('invalid','⚠️','Error During Analysis','Something went wrong. Try again.');
+  }
+
+  $btn.disabled = false;
+  $btnText.textContent = 'Verify Again';
+  $btnIcon.textContent = '🔬';
+}
+
+function setCard(state, icon, headline, sub) {
+  $card.className = 'result-card state-' + state;
+  $icon.textContent = icon;
+  $headline.textContent = headline;
+  $sub.textContent = sub;
+}
+
+function showConf(pct, valid) {
+  $confSec.style.display = 'block';
+  $confVal.textContent = pct + '%';
+  $confVal.className = 'conf-value ' + (valid ? 'ok' : 'bad');
+  $confFill.className = 'conf-fill ' + (valid ? 'ok' : 'bad');
+  $confFill.style.width = '0%';
+  setTimeout(() => { $confFill.style.width = pct + '%'; }, 60);
+}
+
+function highlightTag(canonical) {
+  const id = TAG_MAP[canonical];
+  if (id) document.getElementById(id).classList.add('lit');
+}
+
+function clearTags() {
+  document.querySelectorAll('.doc-tag').forEach(t => t.classList.remove('lit'));
+}
+
+function renderPreds(sorted) {
+  $predList.innerHTML = '';
+  sorted.forEach((p, i) => {
+    const canonical = canonicalise(p.className);
+    const pct = (p.probability * 100).toFixed(1);
+    const top = i === 0;
+    const row = document.createElement('div');
+    row.className = 'pred-row';
+    row.innerHTML =
+      '<div class="pred-name' + (top ? ' winner' : '') + '">' + canonical + '</div>' +
+      '<div class="pred-track"><div class="pred-fill' + (top ? ' top' : '') + '" data-w="' + pct + '" style="width:0%"></div></div>' +
+      '<div class="pred-pct' + (top ? ' top' : '') + '">' + pct + '%</div>';
+    $predList.appendChild(row);
+  });
+  $predPanel.style.display = 'block';
+  setTimeout(() => {
+    document.querySelectorAll('.pred-fill').forEach(f => { f.style.width = f.dataset.w + '%'; });
+  }, 80);
+}
+</script>
+</body>
+</html>
